@@ -1,3 +1,4 @@
 .idea/
 wordpress-files/
 export.sh
+.gitignore
