@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.7'
 
 volumes:
   wp-data:
@@ -12,12 +12,26 @@ services:
     volumes:
       - wp-data:/var/lib/mysql
     environment:
-       MYSQL_ROOT_PASSWORD: rootPassword
+       MYSQL_ROOT_PASSWORD: root-pass
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wp-user
        MYSQL_PASSWORD: wp-pass
     ports:
       - 8889:3306
+    networks:
+      - wp-back
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      MYSQL_USER: wp-user
+      MYSQL_PASSWORD: wp-pass
+      MYSQL_ROOT_PASSWORD: root-pass
+    ports:
+      - 3001:80
     networks:
       - wp-back
 
@@ -29,7 +43,7 @@ services:
       - 8888:80
       - 443:443
     environment:
-       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_HOST: db
        WORDPRESS_DB_USER: wp-user
        WORDPRESS_DB_PASSWORD: wp-pass
     volumes:
@@ -38,16 +52,3 @@ services:
     networks:
       - wp-back
 
-  phpmyadmin:
-    depends_on:
-      - db
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - 3001:80
-    environment:
-      PMA_HOST: db
-      MYSQL_USER: wp-user
-      MYSQL_PASSWORD: wp-pass
-      MYSQL_ROOT_PASSWORD: rootPassword
-    networks:
-      - wp-back
